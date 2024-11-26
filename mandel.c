@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "jpegrw.h"
-
+	
 // local routines
 static int iteration_to_color( int i, int max );
 static int iterations_at_point( double x, double y, int max );

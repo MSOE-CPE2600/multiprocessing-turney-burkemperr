@@ -19,7 +19,7 @@ Remove compiled files and images:
 
 ## Runtime Results
 #### Graph of Runtime Results
-![Runtime vs Processes](images/runtime_plot.png)
+![Runtime vs Processes](runtime_plot.png)
 The graph shows the runtime to generate 100 frames of the Mandelbrot set versus different numbers of child processes.
 
 

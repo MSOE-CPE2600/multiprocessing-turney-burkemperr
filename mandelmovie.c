@@ -4,7 +4,7 @@
 *
 * Course: CPE2600
 * Section: 111
-* Assignment: CPE Lab 11
+* Assignment: CPE Lab 12
 * Author: Reagan Burkemper
 *
 * Description: This program generates 100 frames of the Mandelbrot
@@ -16,7 +16,7 @@
 *       - make clean
 *       - make
 *   - run:
-*       -./mandelmovie -p <process_count>
+*       -./mandelmovie -p <process_count> -t <thread_count>
 *   
 *****************************************************************************************************************/
 
@@ -31,17 +31,19 @@ void help()
     printf("Use: mandelmovie -p <process_count>\n");
     printf("Options:\n");
     printf("  -p <process_count>  Number of child processes to use (default=1)\n");
+    printf("  -t <thread_count>   Number of threads per process (default=1, max=20)\n");
     printf("  -h                  Show help\n");
 }
 
 int main(int argc, char *argv[]) 
 {
     int process_count = 1;  // default process count
+    int thread_count = 1;   // default thread count
     int frames = 100;        // number of frames to generate
     char c;
 
     // Parse command-line arguments
-    while ((c = getopt(argc, argv, "p:h")) != -1) 
+    while ((c = getopt(argc, argv, "p:t:h")) != -1) 
     {
         switch (c) 
         {
@@ -53,6 +55,16 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
                 break;
+            case 't': 
+                printf("message recieved");
+                thread_count = atoi(optarg);
+                if (thread_count < 1 || thread_count > 20) //error checking 
+                {
+                    fprintf(stderr, "Invalid: Thread count must be between 1 and 20.\n");
+                    exit(1);
+                }
+                break;
+
             case 'h':
                 help();
                 break;
@@ -86,26 +98,27 @@ int main(int argc, char *argv[])
             char outfile[256];
             snprintf(outfile, sizeof(outfile), "mandel%03d.jpg", i);
 
-            char x_arg[64], y_arg[64], scale_arg[64], max_arg[64], width_arg[64], height_arg[64], outfile_arg[512];
+            char x_arg[64], y_arg[64], scale_arg[64], max_arg[64], width_arg[64], height_arg[64], threads_arg[64], outfile_arg[512];
             snprintf(x_arg, sizeof(x_arg), "-x%lf", xcenter);
             snprintf(y_arg, sizeof(y_arg), "-y%lf", ycenter);
             snprintf(scale_arg, sizeof(scale_arg), "-s%lf", scale);
             snprintf(max_arg, sizeof(max_arg), "-m1000");
             snprintf(width_arg, sizeof(width_arg), "-W1000");
             snprintf(height_arg, sizeof(height_arg), "-H1000");
+            snprintf(threads_arg, sizeof(threads_arg), "-t%d", thread_count);
             snprintf(outfile_arg, sizeof(outfile_arg), "-o%s", outfile);
 
-            if (execl("./mandel", "mandel", x_arg, y_arg, scale_arg, max_arg, width_arg, height_arg, outfile_arg, (char *)NULL) == -1) 
-            {
+            // if (execl("./mandel", "mandel", x_arg, y_arg, scale_arg, max_arg, width_arg, height_arg, outfile_arg, (char *)NULL) == -1) 
+            // {
+            //     perror("execl failed");
+            //     exit(1);
+            // }
+            if (execl("./mandel", "mandel", x_arg, y_arg, scale_arg, max_arg, width_arg, height_arg, threads_arg, outfile_arg, (char *)NULL) == -1) {
                 perror("execl failed");
                 exit(1);
             }
 
-            execl("./mandel", "mandel", x_arg, y_arg, scale_arg, max_arg, width_arg, height_arg, outfile_arg, (char *)NULL);
-
-            // If execl fails
-            //perror("execl failed");
-            //exit(1);
+            execl("./mandel", "mandel", x_arg, y_arg, scale_arg, max_arg, width_arg, height_arg, threads_arg, outfile_arg, (char *)NULL);
         } else if (pid > 0) 
         {
             // parent process
@@ -137,7 +150,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    printf("Movie created: mandelmovie1.mpg\n");
+    printf("Movie created: mandelmovie.mpg\n");
     return 0;
 
 }

@@ -23,6 +23,7 @@ Remove compiled files and images:
 ## Results
 #### Table of Benchmarking Results
 ![Processes vs Threads](benchmarkTable.png)
+
 Looking at the table, multiprocessing seemed to have a greater impact on runtime compared to multithreading. As the number of processes increase from 1 to 20 (with 1 thread) the runtime was reduced greatly from 56.212 seconds to 6.970 seconds. This makes sense because each process runs independently on separate cores, reducing contention and maximizing CPU usage. Multithreading was the most effective when the thread count was close to the number of cores my computer has (12 cores). For most part, multithreading showed diminishing returns as the number of threads increased beyond the 12 CPU cores because it can cause overhead from thread management and context switching. The "sweet spot" for minimal runtime was 6.970 seconds with 20 processes and 1 thread.
 #### Graph of Runtime Results
 ![Runtime vs Processes](runtime_plot.png)
